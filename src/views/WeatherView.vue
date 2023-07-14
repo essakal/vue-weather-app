@@ -3,12 +3,7 @@
     <div class="child">
       <div class="child2">
         <form class="form">
-          <input
-            type="text"
-            placeholder="Enter a city..."
-            :class="err"
-            v-model="city"
-          />
+          <input type="text" placeholder="Enter a city..." v-model="city" />
           <button @click.prevent="getData">serch</button>
         </form>
         <!-- <div v-if="weather.name == undefined">
@@ -49,13 +44,13 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
 export default {
   data() {
     return {
       city: "",
       weather: {},
       icon: "",
-      err: "",
     };
   },
   methods: {
@@ -64,21 +59,30 @@ export default {
         `https://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=7aa369ece7e8f58bb59291029700b587`
       )
         .then((res) => res.json())
-        .then((data) => (this.weather = data))
-        .then(
-          (data) =>
-            (this.icon = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`)
-        )
+        .then((data) => {
+          this.weather = data;
+          if (data.name == undefined) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "this city not exist",
+            });
+          } else {
+            this.icon = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+          }
+        })
         .catch((error) => console.log(error));
     },
     getData() {
       if (this.city === "") {
-        this.err = "err";
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "please enter a city",
+        });
       } else {
-        this.err = "";
         this.getWeather();
         this.city = "";
-        if (this.weather.name == undefined) console.log("hhh");
       }
     },
   },
@@ -245,8 +249,5 @@ export default {
   .child2 {
     width: 95%;
   }
-}
-.err {
-  background-color: rgb(255, 198, 198);
 }
 </style>
