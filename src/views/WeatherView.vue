@@ -6,9 +6,6 @@
           <input type="text" placeholder="Enter a city..." v-model="city" />
           <button @click.prevent="getData">serch</button>
         </form>
-        <!-- <div v-if="weather.name == undefined">
-          <h1>{{ city }} city makaynach</h1>
-        </div> -->
         <div v-if="weather.name !== undefined">
           <div class="info">
             <div class="head">
@@ -60,7 +57,6 @@ export default {
       )
         .then((res) => res.json())
         .then((data) => {
-          this.weather = data;
           if (data.name == undefined) {
             Swal.fire({
               icon: "error",
@@ -68,6 +64,7 @@ export default {
               text: "this city not exist",
             });
           } else {
+            this.weather = data;
             this.icon = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
           }
         })
